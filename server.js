@@ -3,18 +3,14 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-// Validate environment variables for EmailJS
-const requiredEnvVars = [
-  "EMAILJS_PUBLIC_KEY",
-  "EMAILJS_SERVICE_ID",
-  "EMAILJS_TEMPLATE_ID",
-];
+// Validate environment variables for Nodemailer
+const requiredEnvVars = ["EMAIL_USER", "EMAIL_PASSWORD"];
 const missingEnvVars = requiredEnvVars.filter(
   (varName) => !process.env[varName],
 );
 
 if (missingEnvVars.length > 0) {
-  console.warn("⚠️  Warning: Missing EmailJS environment variables:");
+  console.warn("⚠️  Warning: Missing Nodemailer environment variables:");
   missingEnvVars.forEach((varName) => console.warn(`   - ${varName}`));
   console.warn(
     "   Emails will not be sent until these are configured in .env file",

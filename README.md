@@ -17,7 +17,7 @@ A full-stack TODO application with Node.js, Express, MongoDB, and scheduled emai
 - **Frontend**: HTML, CSS, Vanilla JavaScript
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB with Mongoose
-- **Email**: EmailJS
+- **Email**: Nodemailer
 - **Scheduling**: node-cron (runs every minute to check for emails)
 
 ## Prerequisites
@@ -29,72 +29,81 @@ A full-stack TODO application with Node.js, Express, MongoDB, and scheduled emai
 ## Installation
 
 1. **Clone or navigate to the project directory**
+
    ```bash
    cd "path/to/TODO"
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
-   
+
    **IMPORTANT:** Create a `.env` file in the root directory:
-   
+
    Then edit `.env` and add your EmailJS credentials:
+
    ```env
    # MongoDB Connection
    MONGODB_URI=mongodb://localhost:27017/todoapp
-   
+
    # Server Configuration
    PORT=3000
-   
-   # EmailJS Configuration (Required for email notifications)
-   # Get these from https://www.emailjs.com/ dashboard
-   EMAILJS_PUBLIC_KEY=your_public_key_here
-   EMAILJS_SERVICE_ID=your_service_id_here
-   EMAILJS_TEMPLATE_ID=your_template_id_here
+
+   # Nodemailer SMTP Configuration (Required for email notifications)
+   EMAIL_USER=your_email@example.com
+   EMAIL_PASSWORD=your_email_password
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
    ```
-   
+
    **Note:** The `.env` file is in `.gitignore` to protect your private keys. Never commit it to git!
 
    **For MongoDB Atlas (cloud):**
+
    ```env
    MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/todoapp
    ```
 
 4. **Start MongoDB** (if using local MongoDB)
-   
+
    On macOS with Homebrew:
+
    ```bash
    brew services start mongodb-community
    ```
-   
+
    On Linux:
+
    ```bash
    sudo systemctl start mongod
    ```
-   
+
    On Windows:
+
    ```bash
    net start MongoDB
    ```
-   
+
    Or use MongoDB Atlas (cloud) - no local installation needed.
 
 5. **Start the server**
+
    ```bash
    npm start
    ```
-   
+
    For development with auto-reload:
+
    ```bash
    npm run dev
    ```
 
 6. **Open your browser**
-   
+
    Navigate to: `http://localhost:3000`
 
 ## Project Structure
@@ -106,7 +115,7 @@ TODO/
 ├── routes/
 │   └── tasks.js             # API routes (GET, POST, PUT, DELETE)
 ├── services/
-│   ├── emailService.js      # Email sending logic (EmailJS)
+│   ├── emailService.js      # Email sending logic (Nodemailer)
 │   └── emailScheduler.js    # Cron job for scheduled emails
 ├── server.js                # Express server setup
 ├── package.json             # Dependencies and scripts
@@ -127,6 +136,7 @@ TODO/
 ## Email Scheduling
 
 Emails are sent automatically via **node-cron** that runs every minute:
+
 - Checks for tasks with scheduled datetime
 - Sends email if current time >= scheduled time
 - Marks `emailSentAt` to prevent duplicate emails
@@ -137,28 +147,29 @@ Emails are sent automatically via **node-cron** that runs every minute:
 ### MongoDB Connection
 
 **Local MongoDB:**
+
 ```env
 MONGODB_URI=mongodb://localhost:27017/todoapp
 ```
 
 **MongoDB Atlas (Cloud):**
+
 ```env
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/todoapp
 ```
 
-### EmailJS Setup
+### Nodemailer Setup
 
-**EmailJS configuration is stored in `.env` file for privacy.**
+**Nodemailer configuration is stored in `.env` file for privacy.**
 
-1. Sign up at [EmailJS](https://www.emailjs.com/)
-2. Create a service (Gmail, Outlook, etc.)
-3. Create an email template
-4. Create a `.env` file and add your EmailJS credentials:
-   - `EMAILJS_PUBLIC_KEY` - From EmailJS dashboard
-   - `EMAILJS_SERVICE_ID` - Your service ID
-   - `EMAILJS_TEMPLATE_ID` - Your template ID
+1. Use a real SMTP provider (Gmail, Outlook, Ethereal, etc.)
+2. Create a `.env` file and add your SMTP credentials:
+   - `EMAIL_USER` - Your email address
+   - `EMAIL_PASSWORD` - Your email password or app password
+   - `SMTP_HOST` - SMTP server (e.g., smtp.gmail.com)
+   - `SMTP_PORT` - SMTP port (587 for TLS)
 
-**The server will show a warning on startup if EmailJS configuration is missing.**
+**The server will show a warning on startup if Nodemailer configuration is missing.**
 
 ## Troubleshooting
 
@@ -170,7 +181,7 @@ MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/todoapp
 
 ### Email Not Sending
 
-- Verify EmailJS credentials in `.env`
+- Verify Nodemailer SMTP credentials in `.env`
 - Check server logs for email errors
 - Ensure cron job is running (check server startup logs)
 
@@ -182,6 +193,7 @@ MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/todoapp
 ## Development
 
 Run with nodemon for auto-reload:
+
 ```bash
 npm run dev
 ```
