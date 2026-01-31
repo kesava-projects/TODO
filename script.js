@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api/tasks';
+const API_BASE_URL = "/api/tasks";
 
 let tasks = [];
 
@@ -47,11 +47,11 @@ let editingTaskId = null;
 async function fetchTasks() {
   try {
     const response = await fetch(API_BASE_URL);
-    if (!response.ok) throw new Error('Failed to fetch tasks');
+    if (!response.ok) throw new Error("Failed to fetch tasks");
     tasks = await response.json();
     return tasks;
   } catch (error) {
-    console.error('Error fetching tasks:', error);
+    console.error("Error fetching tasks:", error);
     return [];
   }
 }
@@ -59,14 +59,14 @@ async function fetchTasks() {
 async function createTask(taskData) {
   try {
     const response = await fetch(API_BASE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(taskData)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(taskData),
     });
-    if (!response.ok) throw new Error('Failed to create task');
+    if (!response.ok) throw new Error("Failed to create task");
     return await response.json();
   } catch (error) {
-    console.error('Error creating task:', error);
+    console.error("Error creating task:", error);
     throw error;
   }
 }
@@ -74,14 +74,14 @@ async function createTask(taskData) {
 async function updateTask(taskId, taskData) {
   try {
     const response = await fetch(`${API_BASE_URL}/${taskId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(taskData)
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(taskData),
     });
-    if (!response.ok) throw new Error('Failed to update task');
+    if (!response.ok) throw new Error("Failed to update task");
     return await response.json();
   } catch (error) {
-    console.error('Error updating task:', error);
+    console.error("Error updating task:", error);
     throw error;
   }
 }
@@ -89,12 +89,12 @@ async function updateTask(taskId, taskData) {
 async function deleteTask(taskId) {
   try {
     const response = await fetch(`${API_BASE_URL}/${taskId}`, {
-      method: 'DELETE'
+      method: "DELETE",
     });
-    if (!response.ok) throw new Error('Failed to delete task');
+    if (!response.ok) throw new Error("Failed to delete task");
     return await response.json();
   } catch (error) {
-    console.error('Error deleting task:', error);
+    console.error("Error deleting task:", error);
     throw error;
   }
 }
@@ -210,7 +210,7 @@ function renderTasks() {
         updateCounts();
         renderTasks();
       } catch (error) {
-        console.error('Error updating task:', error);
+        console.error("Error updating task:", error);
         checkbox.checked = !checkbox.checked; // Revert on error
       }
     });
@@ -253,7 +253,7 @@ function renderTasks() {
 
 function updateCounts() {
   const todayTasks = tasks.filter(
-    (t) => !t.completed && (t.datetime ? isTodayDate(t.datetime) : true)
+    (t) => !t.completed && (t.datetime ? isTodayDate(t.datetime) : true),
   );
   tasksCountEl.textContent = todayTasks.length.toString();
 }
@@ -409,7 +409,7 @@ document.addEventListener("keydown", (e) => {
 
 notificationButton.addEventListener("click", () => toggleNotificationsDrawer());
 closeNotifications.addEventListener("click", () =>
-  notificationsDrawer.classList.add("hidden")
+  notificationsDrawer.classList.add("hidden"),
 );
 
 taskForm.addEventListener("submit", async (e) => {
@@ -442,14 +442,14 @@ taskForm.addEventListener("submit", async (e) => {
     } else {
       await createTask(taskData);
     }
-    
+
     await loadTasks();
     updateCounts();
     renderTasks();
     closeModal();
   } catch (error) {
-    console.error('Error saving task:', error);
-    alert('Failed to save task. Please try again.');
+    console.error("Error saving task:", error);
+    alert("Failed to save task. Please try again.");
   }
 });
 
