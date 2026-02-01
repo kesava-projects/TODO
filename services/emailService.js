@@ -1,15 +1,15 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const EMAIL_USER = process.env.EMAIL_USER;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
 const SMTP_PORT = process.env.SMTP_PORT || 587;
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
   port: SMTP_PORT,
-  secure: false,
+  secure: true,
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASSWORD,
@@ -63,7 +63,9 @@ async function sendTaskEmail(task) {
         <h2>Hi ${friendlyName},</h2>
         <p>You have a task due:</p>
         <h3>${task.title}</h3>
-        <p><strong>Description:</strong> ${task.description || "No description"}</p>
+        <p><strong>Description:</strong> ${
+          task.description || "No description"
+        }</p>
         <p><strong>Due Date:</strong> ${dateText}</p>
         <p><strong>Type:</strong> ${task.type || "other"}</p>
         <p><strong>Priority:</strong> ${task.priority || "Low"}</p>
