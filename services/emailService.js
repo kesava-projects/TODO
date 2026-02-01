@@ -7,12 +7,7 @@ const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
 const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
 
 const transporter = nodemailer.createTransport({
-  host: SMTP_HOST,
-  port: SMTP_PORT,
-  secure: false,
-  requireTLS: true,
-  logger: true,
-  debug: true,
+  service: "Gmail",
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASSWORD,
