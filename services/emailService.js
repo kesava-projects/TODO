@@ -10,6 +10,9 @@ const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
   port: SMTP_PORT,
   secure: false,
+  requireTLS: true,
+  logger: true,
+  debug: true,
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASSWORD,
