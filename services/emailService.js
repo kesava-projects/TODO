@@ -1,20 +1,8 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 require("dotenv").config();
 
-const EMAIL_USER = process.env.EMAIL_USER;
-const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
-const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
-const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: EMAIL_USER,
-    pass: process.env.PRO_API,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev";
 
 function formatDateTime(isoString) {
   if (!isoString) return "No due date";
@@ -38,11 +26,9 @@ function formatDateTime(isoString) {
 }
 
 async function sendTaskEmail(task) {
-  if (!EMAIL_USER || !EMAIL_PASSWORD) {
-    console.warn("Nodemailer configuration missing. Email not sent.");
-    console.warn("Please check your .env file has:");
-    console.warn("  - EMAIL_USER");
-    console.warn("  - EMAIL_PASSWORD");
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("Resend API key missing. Email not sent.");
+    console.warn("Please set RESEND_API_KEY in your .env file");
     return false;
   }
 
@@ -55,29 +41,32 @@ async function sendTaskEmail(task) {
     const dateText = formatDateTime(task.datetime);
     const friendlyName = task.email ? task.email.split("@")[0] : "there";
 
-    const mailOptions = {
-      from: EMAIL_USER,
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: task.email,
       subject: `Task Reminder: ${task.title}`,
       html: `
         <h2>Hi ${friendlyName},</h2>
         <p>You have a task due:</p>
         <h3>${task.title}</h3>
-        <p><strong>Description:</strong> ${
-          task.description || "No description"
-        }</p>
+        <p><strong>Description:</strong> ${task.description || "No description"}</p>
         <p><strong>Due Date:</strong> ${dateText}</p>
         <p><strong>Type:</strong> ${task.type || "other"}</p>
         <p><strong>Priority:</strong> ${task.priority || "Low"}</p>
       `,
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error("Failed to send email via Resend:", error);
+      return false;
+    }
 
-    console.info(`Email sent successfully for task: ${task.title}`);
+    console.info(
+      `Email sent successfully for task: ${task.title} (ID: ${data.id})`,
+    );
     return true;
   } catch (error) {
-    console.error("Failed to send email via Nodemailer:", error);
+    console.error("Failed to send email via Resend:", error);
     return false;
   }
 }
